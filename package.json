@@ -4,9 +4,9 @@
   "author": "GreenImp <info@greenimp.co.uk> (http://greenimp.co.uk)",
   "version": "4.0.3",
   "license": "MIT",
-  "main": "lib/esm/bundle.js",
-  "module": "lib/esm/bundle.js",
-  "browser": "lib/umd/bundle.js",
+  "main": "lib/esm/bundle.min.js",
+  "module": "lib/esm/bundle.min.js",
+  "browser": "lib/umd/bundle.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/GreenImp/rpg-dice-roller.git"
