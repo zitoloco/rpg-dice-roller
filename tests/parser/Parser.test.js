@@ -7,6 +7,7 @@ import ExplodeModifier from '../../src/modifiers/ExplodeModifier';
 import ReRollModifier from '../../src/modifiers/ReRollModifier';
 import KeepModifier from '../../src/modifiers/KeepModifier';
 import parser from '../../src/parser/grammars/grammar';
+import RollGroup from '../../src/RollGroup';
 import SortingModifier from '../../src/modifiers/SortingModifier';
 import TargetModifier from '../../src/modifiers/TargetModifier';
 
@@ -1583,6 +1584,106 @@ describe('Parser', () => {
         expect(() => {
           Parser.parse('4d-6');
         }).toThrow(parser.SyntaxError);
+      });
+
+      test('can parse`{1d6}`', () => {
+        const parsed = Parser.parse('{1d6}');
+
+        expect(parsed).toBeInstanceOf(Array);
+        expect(parsed).toHaveLength(1);
+        expect(parsed[0]).toBeInstanceOf(RollGroup);
+        expect(parsed[0].notation).toEqual('{1d6}');
+        expect(parsed[0].modifiers).toBeInstanceOf(Map);
+        expect(parsed[0].modifiers.size).toEqual(0);
+        expect(parsed[0].expressions).toBeInstanceOf(Array);
+        expect(parsed[0].expressions).toHaveLength(1);
+        expect(parsed[0].expressions[0]).toBeInstanceOf(Array);
+        expect(parsed[0].expressions[0]).toHaveLength(1);
+        expect(parsed[0].expressions[0][0]).toBeInstanceOf(StandardDice);
+        expect(parsed[0].expressions[0][0]).toEqual(expect.objectContaining({
+          notation: '1d6',
+          sides: 6,
+          qty: 1,
+        }));
+      });
+
+      test('can parse `{1d6+1d4}`', () => {
+        const parsed = Parser.parse('{1d6+1d4}');
+
+        expect(parsed).toBeInstanceOf(Array);
+        expect(parsed).toHaveLength(1);
+        expect(parsed[0]).toBeInstanceOf(RollGroup);
+        expect(parsed[0].notation).toEqual('{1d6+1d4}');
+        expect(parsed[0].modifiers).toBeInstanceOf(Map);
+        expect(parsed[0].modifiers.size).toEqual(0);
+        expect(parsed[0].expressions).toBeInstanceOf(Array);
+        expect(parsed[0].expressions).toHaveLength(1);
+        expect(parsed[0].expressions[0]).toBeInstanceOf(Array);
+        expect(parsed[0].expressions[0]).toHaveLength(3);
+        expect(parsed[0].expressions[0][0]).toBeInstanceOf(StandardDice);
+        expect(parsed[0].expressions[0][0]).toEqual(expect.objectContaining({
+          notation: '1d6',
+          sides: 6,
+          qty: 1,
+        }));
+        expect(parsed[0].expressions[0][1]).toEqual('+');
+        expect(parsed[0].expressions[0][2]).toBeInstanceOf(StandardDice);
+        expect(parsed[0].expressions[0][2]).toEqual(expect.objectContaining({
+          notation: '1d4',
+          sides: 4,
+          qty: 1,
+        }));
+      });
+
+      test('can parse `{1d6, 1d4}`', () => {
+        const parsed = Parser.parse('{1d6, 1d4}');
+
+        expect(parsed).toBeInstanceOf(Array);
+        expect(parsed).toHaveLength(1);
+        expect(parsed[0]).toBeInstanceOf(RollGroup);
+        expect(parsed[0].notation).toEqual('{1d6, 1d4}');
+        expect(parsed[0].modifiers).toBeInstanceOf(Map);
+        expect(parsed[0].modifiers.size).toEqual(0);
+        expect(parsed[0].expressions).toBeInstanceOf(Array);
+        expect(parsed[0].expressions).toHaveLength(2);
+        expect(parsed[0].expressions[0]).toBeInstanceOf(Array);
+        expect(parsed[0].expressions[0]).toHaveLength(1);
+        expect(parsed[0].expressions[0][0]).toBeInstanceOf(StandardDice);
+        expect(parsed[0].expressions[0][0]).toEqual(expect.objectContaining({
+          notation: '1d6',
+          sides: 6,
+          qty: 1,
+        }));
+        expect(parsed[0].expressions[1]).toBeInstanceOf(Array);
+        expect(parsed[0].expressions[1]).toHaveLength(1);
+        expect(parsed[0].expressions[1][0]).toBeInstanceOf(StandardDice);
+        expect(parsed[0].expressions[1][0]).toEqual(expect.objectContaining({
+          notation: '1d4',
+          sides: 4,
+          qty: 1,
+        }));
+      });
+
+      test('can parse `{1}`', () => {
+        const parsed = Parser.parse('{1}');
+
+        expect(parsed).toBeInstanceOf(Array);
+        expect(parsed).toHaveLength(1);
+        expect(parsed[0]).toBeInstanceOf(RollGroup);
+        expect(parsed[0].notation).toEqual('{1}');
+        expect(parsed[0].modifiers).toBeInstanceOf(Map);
+        expect(parsed[0].modifiers.size).toEqual(0);
+        expect(parsed[0].expressions).toBeInstanceOf(Array);
+        expect(parsed[0].expressions).toHaveLength(1);
+        expect(parsed[0].expressions[0]).toBeInstanceOf(Array);
+        expect(parsed[0].expressions[0]).toHaveLength(1);
+        expect(parsed[0].expressions[0][0]).toEqual(1);
+      });
+
+      test('throws error on empty group', () => {
+        expect(() => {
+          Parser.parse('{}');
+        }).toThrow(SyntaxError);
       });
     });
   });
