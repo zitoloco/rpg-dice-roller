@@ -21,9 +21,9 @@ class Parser {
    */
   static parse(notation) {
     if (!notation) {
-      throw Error('Notation is required');
+      throw new Error('Notation is required');
     } else if (typeof notation !== 'string') {
-      throw Error('Notation must be a string');
+      throw new Error('Notation must be a string');
     }
 
     // parse the notation
